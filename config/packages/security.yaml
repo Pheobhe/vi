@@ -6,7 +6,10 @@ security:
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
-            id: App\Security\UserProvider
+            entity:
+                class: App\Entity\User
+                property: Username
+        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
