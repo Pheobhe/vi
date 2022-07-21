@@ -1,0 +1,13 @@
+#!/bin/ash
+if /srv/symfony/bin/console c:clear -e $APP_ENV -n ; then
+else
+    rm -R /srv/symfony/var/cache/*
+    echo "Se elimino la cache con rm"
+fi
+chmod 777 -R /srv/symfony/var/cache
+echo "Reasignando permisos a la cache"
+
+timestamp=`date +%Y/%m/%d-%H:%M`
+echo "-------------------------------------------------------";
+echo "Se limpio la cache ($timestamp)";
+echo "-------------------------------------------------------";

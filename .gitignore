@@ -7,14 +7,21 @@
 /public/bundles/
 /var/
 /vendor/
+data/
+!/data/initial.sql
+symfony.lock
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
+#.phpunit
+#phpunit.xml
 ###< symfony/phpunit-bridge ###
 
+###> symfony/web-server-bundle ###
+/.web-server-pid
+###< symfony/web-server-bundle ###
+
 ###> phpunit/phpunit ###
-/phpunit.xml
+#/phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###

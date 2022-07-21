@@ -1,21 +1,69 @@
-version: '3'
-
+version: '3.6'
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-symfony}
-    volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+    php:
+        build:
+            context: .
+            target: symfony_php
+            args:
+                APP_ENV: dev
+        depends_on:
+        - database
+                
+        env_file:
+        - .env
+        volumes:
+        # - ./:/srv/symfony/:rw
+        - ./config:/srv/symfony/config:rw
+        - ./public:/srv/symfony/public:rw
+        - ./tests:/srv/symfony/tests:rw
+        - ./migrations:/srv/symfony/migrations:rw
+        - ./templates:/srv/symfony/templates:rw
+        - ./src:/srv/symfony/src:rw
+        
+    nginx:
+        build:
+            context: .
+            target: symfony_nginx
+            args:
+                APP_ENV: dev
+        depends_on:
+        - php
+        environment:
+            VIRTUAL_HOST: localhost
+        ports:
+            - "8017:80"
+        volumes:
+            - ./public:/srv/symfony/public:rw
+            # - symfony-media:/srv/symfony/web/media:ro,nocopy
+            #     - symfony-asset:/srv/symfony/web/build:ro,nocopy
+
+    database:
+        image: mysql:5.7
+        environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=vi
+        - MYSQL_USER=user
+        - MYSQL_PASSWORD=pass
+        volumes:
+        - symfony-db:/var/lib/mysql:rw,delegated
+        healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            timeout: 20s
+            retries: 10
+
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        depends_on:
+            - database
+        ports:
+            - 8080:80
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOST=database
+            - PMA_USER=user
+            - PMA_PASSWORD=pass
+            - MYSQL_ROOT_PASSWORD=root
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  db-data:
-###< doctrine/doctrine-bundle ###
+  symfony-db:

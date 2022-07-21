@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+	set -- php-fpm "$@"
+fi
+
+if [ "$1" = 'php-fpm' ] || [ "$1" = 'bin/console' ]; then
+
+	until nc -z -v -w30 database 3306
+	do
+		sleep 5
+		echo "----------------------------------"
+		echo "Esperando que la BD este iniciada"
+		echo "----------------------------------"
+		# wait for 5 seconds before check again
+	done
+
+	mkdir -p var/log var/cache
+    chmod 777 -R var/log var/cache
+
+
+fi
+
+echo "-----------------------"
+echo "Creando Base de Datos"
+echo "-----------------------"
+php bin/console d:d:c --if-not-exists
+
+echo "-----------------------"
+echo "Corriendo Migraciones"
+echo "-----------------------"
+php bin/console d:m:m -n
+
+if [  $APP_INIT == "YES" ]; then
+	echo "-----------------------"
+	echo "Cargando Datos"
+	echo "-----------------------"
+	php bin/console d:f:l -n
+fi
+
+exec docker-php-entrypoint "$@"
