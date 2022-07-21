@@ -18,14 +18,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $Username = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(type: 'string')]
+    private $password ;
 
     public function getId(): ?int
     {

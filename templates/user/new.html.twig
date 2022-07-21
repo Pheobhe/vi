@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %}
 
 {% block title %}New User{% endblock %}
 
@@ -8,4 +8,44 @@
     {{ include('user/_form.html.twig') }}
 
     <a href="{{ path('app_user_index') }}">back to list</a>
+{% endblock %} #}
+{% extends 'base.html.twig' %}
+
+{% block headerTitle %}
+Crear Usuario
+{% endblock headerTitle %}
+
+{% block headerBreadcrumb %}
+<li class="breadcrumb-item"><a href='index.html'><i class="feather icon-home"></i></a></li>
+<li class="breadcrumb-item"><a>Usuarios</a></li>
+{% endblock headerBreadcrumb %}
+
+
+{% block body %}
+<div class="card">
+    <div class="card-body">
+        <h5>Crear Nuevo Usuario</h5>
+
+        {{ include('user/_form.html.twig') }}
+    </div>
+</div> 
+<a class="mr-4 btn btn-secondary" style="float: right" href="{{ path('user_index') }}">Volver al
+    listado</a>
+
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
 {% endblock %}
